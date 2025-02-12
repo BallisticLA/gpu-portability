@@ -1,15 +1,5 @@
 # demo project using hip in the way RandLAPACK requires
 
-## correspondences with RandLAPACK
- * The ``pr_`` prefix in this project's source files is analogous to the ``rl_`` prefix in RandLAPACK source files.
- * Differences in our analogs to files in ``RandLAPACK/gpu_functions/``:
-     * ``pr_cuda_kernels.cuh`` is currently empty.
-     * ``pr_cusolver.hh`` includes ``cuda.h``.
- * ``pr_algorithm.hh`` is like our version of a driver file, like ``rl_cqrrpt_gpu.hh``.
- * Notable aspects of our ``pr_lapackpp.hh``:
-     * It merges merges RandLAPACK's ``rl_blaspp.hh`` and ``rl_lapackpp.hh``.
-     * It includes ``lapack/device.hh`` if ``ENABLE_CUDA`` is defined.
-
 ## (Trying to) build this project
 
 Riley installed HIP by using two scripts from AMD.
@@ -93,3 +83,13 @@ For some reason, I needed to *also* define pr_config.hh in the "proj" folder. Ri
 #define ENABLE_CUDA
 ```
 You should change the ``HIP_PLATFORM`` value as needed for what you're trying to accomplish. My understanding is that the only other legitimate value is `` __HIP_PLATFORM_AMD__``.
+
+## correspondences with RandLAPACK
+ * The ``pr_`` prefix in this project's source files is analogous to the ``rl_`` prefix in RandLAPACK source files.
+ * Differences in our analogs to files in ``RandLAPACK/gpu_functions/``:
+     * ``pr_cuda_kernels.cuh`` is currently empty.
+     * ``pr_cusolver.hh`` includes ``cuda.h``.
+ * ``pr_algorithm.hh`` is like our version of a driver file, like ``rl_cqrrpt_gpu.hh``.
+ * Notable aspects of our ``pr_lapackpp.hh``:
+     * It merges merges RandLAPACK's ``rl_blaspp.hh`` and ``rl_lapackpp.hh``.
+     * It includes ``lapack/device.hh`` if ``ENABLE_CUDA`` is defined.
