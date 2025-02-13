@@ -38,7 +38,7 @@ endif()
 
 # Configure the build
 
-include(pr_build_options)
+include(/home/users/gcapodag/repos/gpu-portability/CMake/pr_build_options.cmake)
 find_package(lapackpp REQUIRED)
 add_subdirectory(proj)
 

@@ -16,11 +16,11 @@
 
 #define check_cuda_error                                                \
 {                                                                       \
-    cudaDeviceSynchronize();                                            \
-    cudaError_t ierr = cudaGetLastError();                              \
-    if (ierr != cudaSuccess)                                            \
+    hipDeviceSynchronize();                                            \
+    hipError_t ierr = hipGetLastError();                              \
+    if (ierr != hipSuccess)                                            \
     {                                                                   \
-        RandLAPACK_CUDA_ERROR("CUDA error : " << cudaGetErrorString( ierr ));      \
+        RandLAPACK_CUDA_ERROR("CUDA error : " << hipGetErrorString( ierr ));      \
         abort();                                                        \
     }                                                                   \
 }

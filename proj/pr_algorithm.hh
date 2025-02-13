@@ -3,8 +3,8 @@
 #include "pr_lapackpp.hh"
 #include "pr_cuda_macros.hh"
 
-#include <cuda.h>
-#include <cuda_runtime.h>
+#include <hip/hip_runtime.h>
+#include <hip/hip_runtime.h>
 
 #include <cstdint>
 #include <vector>
@@ -25,12 +25,12 @@ template <typename T>
 void cholqr_offload_nocuda(int64_t m, int64_t n, T* A, int64_t lda, T* R, int64_t ldr) {
     lapack::Queue queue(0);
     T* A_device, R_device;
-    cudaMalloc(&A_device, lda * n * sizeof(T));
-    cudaMalloc(&R_device, ldr * n * sizeof(T));
-    cudaMemcpy(A_device, A, lda * n * sizeof(T), cudaMemcpyHostToDevice);
-    cudaMemcpy(R_device, R, ldr * n * sizeof(T), cudaMemcpyHostToDevice);
+    hipMalloc(&A_device, lda * n * sizeof(T));
+    hipMalloc(&R_device, ldr * n * sizeof(T));
+    hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyHostToDevice);
+    hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyHostToDevice);
     cholqr_nocusolver(m, n, A_device, lda, R_device, ldr, queue);
     queue.sync();
-    cudaMemcpy(A_device, A, lda * n * sizeof(T), cudaMemcpyDeviceToHost);
-    cudaMemcpy(R_device, R, ldr * n * sizeof(T), cudaMemcpyDeviceToHost);
+    hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyDeviceToHost);
+    hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyDeviceToHost);
 }
