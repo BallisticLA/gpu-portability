@@ -31,6 +31,6 @@ void cholqr_offload_nocuda(int64_t m, int64_t n, T* A, int64_t lda, T* R, int64_
     hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyHostToDevice);
     cholqr_nocuda(m, n, A_device, lda, R_device, ldr, queue);
     queue.sync();
-    hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyDeviceToHost);
-    hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyDeviceToHost);
+    hipMemcpy(A, A_device, lda * n * sizeof(T), hipMemcpyDeviceToHost);
+    hipMemcpy(R, R_device, ldr * n * sizeof(T), hipMemcpyDeviceToHost);
 }
