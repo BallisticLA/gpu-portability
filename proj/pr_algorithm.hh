@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 #include <numeric>
+#include <iostream>
 
 template <typename T>
 void cholqr_nocuda(int64_t m, int64_t k, T* A_device, int64_t lda, T* R_device, int64_t ldr, lapack::Queue &queue) {
@@ -29,6 +30,13 @@ void cholqr_offload_nocuda(int64_t m, int64_t n, T* A, int64_t lda, T* R, int64_
     hipMalloc(&R_device, ldr * n * sizeof(T));
     hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyHostToDevice);
     hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyHostToDevice);
+
+    hipDeviceProp_t devProp;
+    hipGetDeviceProperties(&devProp, 0);
+    std::cout << " System minor " << devProp.minor << std::endl;
+    std::cout << " System major " << devProp.major << std::endl;
+    std::cout << " agent prop name " << devProp.name << std::endl;
+
     cholqr_nocuda(m, n, A_device, lda, R_device, ldr, queue);
     queue.sync();
     hipMemcpy(A, A_device, lda * n * sizeof(T), hipMemcpyDeviceToHost);
