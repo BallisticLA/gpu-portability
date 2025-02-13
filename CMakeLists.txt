@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.27)
 
-# Set project without CUDA language by default
+# Set project without HIP language by default
 project(Proj LANGUAGES CXX)
 
-# Set optional RequireCUDA flag (defaults to OFF)
-option(RequireCUDA "Require CUDA support" ON)
 
-find_package(CUDAToolkit)
-if (CUDAToolkit_FOUND)
-    message(STATUS "CUDA found! Enabling CUDA support.")
-    enable_language(CUDA)
+find_package(HIPToolkit)
+enable_language(HIP)
+if (HIPToolkit_FOUND)
+    message(STATUS "HIP found! Enabling HIP support.")
+    enable_language(HIP)
     
     set(CUDA_VISIBILITY_PRESET hidden)
     set(CMAKE_CUDA_STANDARD 20)
@@ -22,11 +21,11 @@ if (CUDAToolkit_FOUND)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 
-    # Include CUDA-specific files or flags
+    # Include HIP-specific files or flags
     include(compiler_flags)
     include(find_cuda)
 else()
-    message(STATUS "CUDA not found. Continuing without CUDA support.")
+    message(STATUS "HIP not found. Continuing without HIP support.")
 endif()
 
 # Configure the build
@@ -36,6 +35,6 @@ find_package(lapackpp REQUIRED)
 add_subdirectory(proj)
 
 add_executable(proj_main main.cc)
-set_source_files_properties(main.cc PROPERTIES LANGUAGE CUDA)
-set_property(TARGET proj_main PROPERTY CUDA_ARCHITECTURES native)
+set_source_files_properties(main.cc PROPERTIES LANGUAGE HIP)
+set_property(TARGET proj_main PROPERTY HIP_ARCHITECTURES native)
 target_link_libraries(proj_main PUBLIC blaspp lapackpp)

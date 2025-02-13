@@ -12,7 +12,7 @@
 #include <numeric>
 
 template <typename T>
-void cholqr_nocuda(int64_t m, int64_t k, T* A_device, int64_t lda, T* R_device, T* ldr, lapack::Queue &queue) {
+void cholqr_nocuda(int64_t m, int64_t k, T* A_device, int64_t lda, T* R_device, int64_t ldr, lapack::Queue &queue) {
     using lapack::device_info_int;
     device_info_int* d_info = blas::device_malloc< device_info_int >( 1, queue );
     blas::syrk(Layout::ColMajor, Uplo::Upper, Op::Trans, k, m, 1.0, A_device, lda, 0.0, R_device, k, queue);
@@ -24,12 +24,12 @@ void cholqr_nocuda(int64_t m, int64_t k, T* A_device, int64_t lda, T* R_device, 
 template <typename T>
 void cholqr_offload_nocuda(int64_t m, int64_t n, T* A, int64_t lda, T* R, int64_t ldr) {
     lapack::Queue queue(0);
-    T* A_device, R_device;
+    T *A_device, *R_device;
     hipMalloc(&A_device, lda * n * sizeof(T));
     hipMalloc(&R_device, ldr * n * sizeof(T));
     hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyHostToDevice);
     hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyHostToDevice);
-    cholqr_nocusolver(m, n, A_device, lda, R_device, ldr, queue);
+    cholqr_nocuda(m, n, A_device, lda, R_device, ldr, queue);
     queue.sync();
     hipMemcpy(A_device, A, lda * n * sizeof(T), hipMemcpyDeviceToHost);
     hipMemcpy(R_device, R, ldr * n * sizeof(T), hipMemcpyDeviceToHost);
