@@ -1,5 +1,7 @@
 # set default compiler flags
-if (NOT CMAKE_CXX_FLAGS)
+if (${GPU_RUNTIME} MATCHES "CUDA")
+
+	if (NOT CMAKE_CXX_FLAGS)
     set(tmp "-fPIC -std=c++20 -Wall -Wextra -Wno-unknown-pragmas")
     if ((APPLE) AND ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))
         set(tmp "${tmp} -stdlib=libc++")
@@ -14,6 +16,7 @@ if (NOT CMAKE_CXX_FLAGS)
             CACHE STRING "RandLAPACK build defaults"
         FORCE)
 endif()
+
 if (NOT CMAKE_CUDA_FLAGS)
     set(tmp "--default-stream per-thread --expt-relaxed-constexpr")
     if ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
@@ -35,4 +38,13 @@ if (NOT CMAKE_CUDA_FLAGS)
     set(CMAKE_CUDA_FLAGS_RELEASE "${tmp}"
         CACHE STRING "CUDA compiler build defaults"
         FORCE)
+endif()
+
+endif()
+
+if (${GPU_RUNTIME} MATCHES "HIP")
+
+set(ROCMCC_FLAGS "${ROCMCC_FLAGS} -munsafe-fp-atomics --allow-shlib-undefined")
+set(CMAKE_CXX_FLAGS ${ROCMCC_FLAGS})
+
 endif()
