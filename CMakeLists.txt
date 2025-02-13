@@ -6,34 +6,27 @@ project(Proj LANGUAGES CXX)
 # Set optional RequireCUDA flag (defaults to OFF)
 option(RequireCUDA "Require CUDA support" ON)
 
-if (RequireCUDA)
-    find_package(CUDAToolkit)
-    if (CUDAToolkit_FOUND)
-        message(STATUS "CUDA found! Enabling CUDA support.")
-        enable_language(CUDA)
-        
-        set(CUDA_VISIBILITY_PRESET hidden)
-        set(CMAKE_CUDA_STANDARD 20)
-        set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-        set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
-        set(CMAKE_CUDA_VISIBILITY_PRESET hidden)
-        set(CMAKE_CUDA_ARCHITECTURES native)
+find_package(CUDAToolkit)
+if (CUDAToolkit_FOUND)
+    message(STATUS "CUDA found! Enabling CUDA support.")
+    enable_language(CUDA)
+    
+    set(CUDA_VISIBILITY_PRESET hidden)
+    set(CMAKE_CUDA_STANDARD 20)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+    set(CMAKE_CUDA_VISIBILITY_PRESET hidden)
+    set(CMAKE_CUDA_ARCHITECTURES native)
 
-        # Add general CMake module paths
-        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
-        list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-
-        # Include CUDA-specific files or flags
-        include(compiler_flags)
-        include(find_cuda)
-    else()
-        message(STATUS "CUDA not found. Continuing without CUDA support.")
-    endif()
-else()
-    message(STATUS "CUDA support not required.")
     # Add general CMake module paths
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+
+    # Include CUDA-specific files or flags
+    include(compiler_flags)
+    include(find_cuda)
+else()
+    message(STATUS "CUDA not found. Continuing without CUDA support.")
 endif()
 
 # Configure the build
